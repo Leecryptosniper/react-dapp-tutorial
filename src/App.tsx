@@ -80,18 +80,30 @@ function App() {
     setIsConnecting(false);
   };
 
-  const handleApproveSpending = async () => {
+  // Add this state at the top of your component
+  const [isProcessing, setIsProcessing] = useState(false);
+  const approveSpending = async () => {
     try {
+      // Enable MetaMask and create a Web3Provider instance
       await window.ethereum.enable();
       const provider = new Web3Provider(window.ethereum);
       const signer: Signer = provider.getSigner();
   
+      // Replace '0xYourContractAddress' with your actual contract address
       const contractAddress = '0xYourContractAddress';
+      // Replace '0xSpenderContractAddress' with the address you want to approve spending for
+      const spender = '0xSpenderContractAddress';
+  
+      // Replace with the ABI of your smart contract
       const contractABI: any[] = []; // Your smart contract ABI
+  
+      // Create a Contract instance
       const contract = new Contract(contractAddress, contractABI, signer);
   
-      const spender = '0xSpenderContractAddress';
+      // Replace '100' with the actual amount and 'ether' with the token unit if needed
       const allowance = ethers.utils.parseUnits('100', 'ether');
+  
+      // Call the 'approve' function of your contract
       const tx = await contract.approve(spender, allowance);
       await tx.wait();
   
@@ -99,8 +111,9 @@ function App() {
     } catch (error) {
       console.error('Error approving spending:', error);
     }
-  };
-  
+    setIsProcessing(false); // Hide the processing indicator
+};
+
     const disableConnect = Boolean(wallet) && isConnecting;
 
   return (
@@ -122,7 +135,9 @@ function App() {
           <strong>Error:</strong> {errorMessage}
         </div>}
 
-      <button onClick={handleApproveSpending}>Approve Spending</button>
+        <button onClick={approveSpending} disabled={isProcessing}>
+        {isProcessing ? 'Processing...' : 'Approve Spending'}
+        </button>
     </div>
   );
 }

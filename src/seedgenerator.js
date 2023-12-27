@@ -2130,3 +2130,4 @@ var exampleWordList = [
     "zoo"
 ];
 ReactDOM.render((0, jsx_runtime_1.jsx)(SeedPhraseGenerator, { wordList: exampleWordList }), document.getElementById('root'));
+export default SeedPhraseGenerator;

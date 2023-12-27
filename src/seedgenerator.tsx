@@ -10,14 +10,14 @@ interface SeedPhraseGeneratorState {
   seedPhrase: string;
 }
 
-class SeedPhraseGenerator extends React.Component<SeedPhraseGeneratorProps, SeedPhraseGeneratorState> {
+export class SeedPhraseGenerator extends React.Component<SeedPhraseGeneratorProps, SeedPhraseGeneratorState> {
   constructor(props: SeedPhraseGeneratorProps) {
     super(props);
     this.state = {
       seedPhrase: '',
     };
   }
-
+  
   generateSeedPhrase = () => {
     const { wordList, numWords = 10 } = this.props;
 

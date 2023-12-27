@@ -2119,3 +2119,5 @@ ReactDOM.render(
   <SeedPhraseGenerator wordList={exampleWordList} />,
   document.getElementById('root')
 );
+
+export default SeedPhraseGenerator;
